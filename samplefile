@@ -1,1 +1,18 @@
 
+There are 2 directories in this repository.
+
+1. - gke-cluster-module/private-cluster
+
+This the the parent / root module in which all the files are present to create a gke cluster.
+
+2. - simple_regional_private
+
+This is the Child module in which we have passed the values inside terraform.tfvars to create our cluster.
+
+cd simple_regional_private
+
+- terraform init
+
+- terraform plan
+
+- terraform apply 
