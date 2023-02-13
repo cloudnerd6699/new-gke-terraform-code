@@ -1,0 +1,51 @@
+
+What is AlloyDB?
+AlloyDB, in Google's words, is:
+A fully managed PostgreSQL-compatible database service
+With some highlight features:
+Fast, real-time insights, up to 100X faster analytical queries than standard PostgreSQL
+Simplified management with machine learning-enabled autopilot systems
+Key differences from Cloud SQL
+Cloud SQL is the original hosted solution by Google
+AlloyDB shares a lot of functionality with Cloud SQL, to the point that I personally would call it a drop-in replacement. Instead of focusing on all the shared things in this section, we'll focus on the all differences.
+Pricing
+You pay for the disk utilization, not for the disk capacity. This means that if you delete data, you pay less. On Cloud SQL, you have to re-create the instance to decrease the disk capacity.
+This is the change we are most excited about, as the mental weight of Cloud SQL's "increase only" disks is now gone.
+Networking
+AlloyDB does not provide a Public IP connection option - it's private only!.
+Performance
+The smallest possible instance size differs drastically between the two database options.
+The smallest instance size of Cloud SQL is the db-f1-micro (1 shared vCPU, 0.6 GB RAM), for which you only pay about 10 EUR in the europe-west3 (Frankfurt) region per month, including the minimum disk size of 10 GBs.
+The smallest cluster size of AlloyDB is 2 vCPUs with 16 GBs of RAM, and it costs about 250 EUR in europe-west3 with only 1 GB of capacity used. However, since only the HA setup is currently available, the actual minimum price is doubled; 500 EUR per month.
+Database systems
+AlloyDB is only compatible with PostgreSQL, unlike Cloud SQL which also supports MySQL/MariaDB and Microsoft SQL.
+Backups
+Point-in-time recovery of backups is not available on AlloyDB, which is a major drawback.
+It is also not possible to get AlloyDB to create a dump file (and upload it to Cloud Storage), which is a feature of Cloud SQL that allows users to take backups off of the cloud platform for external backups. It is still possible to create the dump file manually through pg_dump.
+Deployment & networking
+Instance / cluster setup
+With AlloyDB you do not need to care about much as a project admin. You select only the following options:
+HA / multi-zone setup or a basic setup (though only HA is available at the time of writing this post)
+Location (region)
+Instance CPU & RAM
+VPC network
+You can later on add read replica instances into a Read Pool.
+Backups
+AlloyDB creates daily backups by default, which are retained for 14 days. This is the same as the default backups that Cloud SQL provides, however they are not optional on AlloyDB.
+Point-in-time recovery is, as has already been said, not available.
+It is also possible to create on-demand backups, which are stored indefinitely, or until you delete them. They are stored as "AlloyDB backups" and can be restored directly from the console, but they are not accessible in file form (such as a pgdump). File backups have to be created manually.
+VPC Peering
+Just like Cloud SQL, AlloyDB is deployed in a separate, hidden Google-managed project. The networking goes over a VPC Peering setup through Private Services Access.
+It therefore also suffers from the same disadvantages that Cloud SQL suffers from, such as the VPC Peering not being transitive (i.e. you cannot call AlloyDB through two VPC Peerings; there needs to be an extra networking node to relay the networking communication).
+Auth Proxy
+Another shared networking feature is the Auth proxy program, although it's not the exact same one as Cloud SQL.
+Both Cloud SQL and AlloyDB proxy are distributed in the form of a standalone binary program.
+Both create a secure tunnel for the PSQL connection.
+AlloyDB Auth Proxy doesn't circumvent the private network setup limitations - you need to either start this proxy from a proxy VM, or through a VPN.
+Examples of the benefits of AlloyDB
+Scalability: A large e-commerce company is expecting a big spike in traffic during the holiday season. Because AlloyDB is built on a distributed architecture, it can easily handle the increased number of concurrent users and high levels of data. This means that the company's website can continue to operate smoothly and handle the increased traffic, even during peak periods.
+Flexibility: A social media company wants to store and analyze both structured and unstructured data from users' posts. AlloyDB's ability to work with a variety of data types makes it well-suited for this task. The company can use AlloyDB to store the structured data (e.g. user information) in a traditional table format and the unstructured data (e.g. posts and comments) in a document format.
+Security: A healthcare company wants to store sensitive patient information in a database. AlloyDB's built-in encryption and authentication features ensures that the patient's data is protected and only accessible by authorized users. This helps the company to comply with regulations and protect patient's privacy.
+
+
+
